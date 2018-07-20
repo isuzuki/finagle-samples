@@ -3,13 +3,14 @@ package io.github.isuzuki
 import com.twitter.finagle.http.path._
 import com.twitter.finagle.http.service.RoutingService
 import com.twitter.finagle.{Http, Service}
-import com.twitter.finagle.http.{Request, Response, Status}
+import com.twitter.finagle.http.{Method, Request, Response, Status}
 import com.twitter.util.{Await, Future}
 
 object Router {
-  val service = RoutingService.byPathObject[Request] {
-    case Root / "item" / itemId => item(itemId)
-    case Root => index
+  val service = RoutingService.byMethodAndPathObject[Request] {
+    case Method.Get  -> Root / "item" / itemId => getItem(itemId)
+    case Method.Post -> Root / "item" => postItem
+    case Method.Get  -> Root => index
     case _ => NotFoundService
   }
 
@@ -20,10 +21,16 @@ object Router {
     Future.value(res)
   }
 
-  def item(itemId: String): Service[Request, Response] = (req: Request) => {
+  def getItem(itemId: String): Service[Request, Response] = (req: Request) => {
     val res = Response(req.version, Status.Ok)
     res.setContentString(s"$itemId item.")
     res.setContentType("text/plain")
+    Future.value(res)
+  }
+
+  val postItem: Service[Request, Response] = (req: Request) => {
+    val content = req.contentString
+    val res = Response(req.version, Status.NoContent)
     Future.value(res)
   }
 

@@ -10,3 +10,12 @@ lazy val commonSettings = Seq(
     "-target:jvm-1.8"
   )
 )
+
+lazy val finagleSample = project.in(file("."))
+  .settings(moduleName := "root")
+  .settings(commonSettings)
+  .settings(Seq(
+    libraryDependencies ++= Seq(
+      "com.twitter" %% "finagle-http" % "18.7.0"
+    )
+  ))

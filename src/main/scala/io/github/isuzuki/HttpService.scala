@@ -9,7 +9,8 @@ import com.twitter.util.{Await, Future}
 object Router {
   val service = RoutingService.byPathObject[Request] {
     case Root / "item" / itemId => item(itemId)
-    case _ => index
+    case Root => index
+    case _ => NotFoundService
   }
 
   val index: Service[Request, Response] = (req: Request) => {
@@ -24,6 +25,15 @@ object Router {
     res.setContentString(s"$itemId item.")
     res.setContentType("text/plain")
     Future.value(res)
+  }
+
+  object NotFoundService extends Service[Request, Response] {
+    def apply(req: Request): Future[Response] = {
+      val res = Response(req.version, Status.NotFound)
+      res.setContentString("Not Found.")
+      res.setContentType("text/plain")
+      Future.value(res)
+    }
   }
 }
 

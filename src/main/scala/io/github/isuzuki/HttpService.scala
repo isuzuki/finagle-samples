@@ -17,8 +17,8 @@ object Router {
 
   val index: Service[Request, Response] = (req: Request) => {
     val res = Response(req.version, Status.Ok)
-    res.setContentString("Hello World.")
-    res.setContentType("text/plain")
+    res.contentString_=("Hello World.")
+    res.contentType_=(MediaType.PlainText)
     Future.value(res)
   }
 
@@ -46,8 +46,8 @@ object Router {
   object NotFoundService extends Service[Request, Response] {
     def apply(req: Request): Future[Response] = {
       val res = Response(req.version, Status.NotFound)
-      res.setContentString("Not Found.")
-      res.setContentType("text/plain")
+      res.contentString_=("Hello World.")
+      res.contentType_=(MediaType.PlainText)
       Future.value(res)
     }
   }
